@@ -1,0 +1,157 @@
+package controller;
+
+import common.ErrorMessage;
+import common.FootballConstant;
+import common.FootballTeamName;
+import common.UefaWinningRate;
+import model.FootballTeam;
+import model.UefaTeam;
+import service.MatchService;
+import view.InputView;
+import view.OutputView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FootballController {
+    private final InputView iv;
+    private final OutputView ov;
+    private final MatchService ms;
+
+    private final List<FootballTeam> totalTeams = new ArrayList<>();
+
+    public FootballController() {
+        this.iv = new InputView();
+        this.ov = new OutputView();
+        this.ms = new MatchService();
+    }
+
+    public void run() {
+        init();
+        List<FootballTeam> semiFinalsTeams;
+
+        try { // 입력값 검증 필요 과정 -> IllegalArgumentException
+            List<FootballTeam> winners = playRoundOf16();
+            semiFinalsTeams = playQuarterFinals(winners);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        playFinal(
+                playSemiFinals(semiFinalsTeams)
+        );
+    }
+
+    // UEFA 16강 진출 팀 객체 생성 및 안내 메시지 출력
+    private void init() {
+        for (FootballTeamName teamName : FootballTeamName.values())
+            totalTeams.add(new UefaTeam(teamName.getFullName(), teamName.getShortName()));
+
+        // UEFA팀 winningRate 초기화
+        int idx = FootballConstant.ZERO.getValue();
+        for (UefaWinningRate winningRate : UefaWinningRate.values()) {
+            UefaTeam uTeam = (UefaTeam) totalTeams.get(idx++);
+            uTeam.setWinningRate(winningRate.getValue());
+        }
+
+        ov.displayInitMessage();
+
+        pressAnyKey();
+    }
+
+    private List<FootballTeam> playRoundOf16() {
+        ov.displayTeamsMessage(totalTeams);
+
+        // 대진표 입력
+        List<FootballTeam> matchTeams = createBracket(FootballConstant.ROUND_OF_16.getValue(), totalTeams);
+        // 경기진행 및 결과 조회
+        List<FootballTeam> winners = progressMatch(FootballConstant.ROUND_OF_16.getValue(), matchTeams);
+
+        pressAnyKey();
+        return winners;
+    }
+
+    private List<FootballTeam> playQuarterFinals(List<FootballTeam> teams) {
+        ov.displayTeamsMessage(teams);
+
+        // 대진표 입력
+        List<FootballTeam> matchTeams = createBracket(FootballConstant.QUARTER_FINALS.getValue(), teams);
+        // 경기 진행 및 결과 조회
+        List<FootballTeam> winners = progressMatch(FootballConstant.QUARTER_FINALS.getValue(), matchTeams);
+
+        pressAnyKey();
+        return winners;
+    }
+
+    private List<FootballTeam> playSemiFinals(List<FootballTeam> teams) {
+        ov.displayTeamsMessage(teams);
+        return progressMatch(FootballConstant.SEMI_FINALS.getValue(), teams);
+    }
+
+    private void playFinal(List<FootballTeam> teams) {
+        ov.printMatchInfo(
+                FootballConstant.ZERO.getValue(),
+                FootballConstant.ONE.getValue(),
+                teams.get(FootballConstant.ZERO.getValue()),
+                teams.get(FootballConstant.ONE.getValue())
+        );
+        pressAnyKey();
+
+        ov.finalWinnerMessage(
+                ms.fight(
+                        teams.get(FootballConstant.ZERO.getValue()),
+                        teams.get(FootballConstant.ONE.getValue())
+                )
+        );
+
+        iv.close();
+    }
+
+    private List<FootballTeam> createBracket(int teamsCount, List<FootballTeam> teams) {
+        List<FootballTeam> matchTeams = new ArrayList<>();
+
+        boolean[] isSelected = new boolean[teamsCount];
+        for (int i = FootballConstant.ZERO.getValue(); i < teamsCount; i++) {
+            int footballTeamIdx = iv.userInput();
+            validateIdxScope(teamsCount, footballTeamIdx, isSelected);
+
+            matchTeams.add(teams.get(footballTeamIdx));
+        }
+
+        return matchTeams;
+    }
+
+    private List<FootballTeam> progressMatch(int teamsCount, List<FootballTeam> teams) {
+        List<FootballTeam> winners = new ArrayList<>();
+
+        int matchCount = FootballConstant.ZERO.getValue();
+        for (int i = FootballConstant.ZERO.getValue(); i < teamsCount; i += FootballConstant.TWO.getValue()) {
+            ov.printMatchInfo(teamsCount, ++matchCount, teams.get(i), teams.get(i + FootballConstant.ONE.getValue()));
+            pressAnyKey();
+
+            FootballTeam winner = ms.fight(
+                    teams.get(i),
+                    teams.get(i + FootballConstant.ONE.getValue())
+            );
+            winners.add(winner);
+            ov.printWinner(winner);
+        }
+
+        return winners;
+    }
+
+    private void validateIdxScope(int round, int idx, boolean[] isSelected) {
+        if (idx < FootballConstant.ZERO.getValue() || idx > (round - FootballConstant.ONE.getValue()))
+            throw new IllegalArgumentException(ErrorMessage.INVALID_NUMBER_SCOPE.getMessage());
+        if (isSelected[idx])
+            throw new IllegalArgumentException(ErrorMessage.ALREADY_SELECTED_TEAM.getMessage());
+
+        isSelected[idx] = true;
+    }
+
+    private void pressAnyKey() {
+        ov.displayPressAnyKey();
+        iv.pressAnyKey();
+    }
+}
