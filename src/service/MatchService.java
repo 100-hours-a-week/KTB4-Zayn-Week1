@@ -36,7 +36,7 @@ public class MatchService {
 
         if (rA < RandomConstant.INJURY_PROBABILITY.getValue()) {
             teamA.setOccurInjuryCount(
-                    teamA.getOccurInjuryCount() + FootballConstant.ONE.getValue()
+                    teamA.getOccurInjuryCount() + 1
             );
 
             ((UefaTeam) teamA).setWinningRate(
@@ -46,7 +46,7 @@ public class MatchService {
 
         if (rB < RandomConstant.INJURY_PROBABILITY.getValue()) {
             teamB.setOccurInjuryCount(
-                    teamB.getOccurInjuryCount() + FootballConstant.ONE.getValue()
+                    teamB.getOccurInjuryCount() + 1
             );
 
             ((UefaTeam) teamB).setWinningRate(

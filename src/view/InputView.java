@@ -19,7 +19,7 @@ public class InputView {
 
     public int userInput() {
         System.out.print(ViewMessage.USER_INPUT_FORMAT.getMessage());
-        return validateUserInput(sc.nextLine().trim());
+        return validateUserInput(sc.nextLine().trim()); // List<FootballTeam>의 index
     }
 
     private int validateUserInput(String input) {
@@ -31,7 +31,7 @@ public class InputView {
 
     private int parseAndValidateDigit(String s) {
         try {
-            return Integer.parseInt(s) - FootballConstant.ONE.getValue();
+            return Integer.parseInt(s) - 1;
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_NUMBER_FORMAT.getMessage());
         }

@@ -49,7 +49,7 @@ public class FootballController {
             totalTeams.add(new UefaTeam(teamName.getFullName(), teamName.getShortName()));
 
         // UEFA팀 winningRate 초기화
-        int idx = FootballConstant.ZERO.getValue();
+        int idx = 0;
         for (UefaWinningRate winningRate : UefaWinningRate.values()) {
             UefaTeam uTeam = (UefaTeam) totalTeams.get(idx++);
             uTeam.setWinningRate(winningRate.getValue());
@@ -91,17 +91,17 @@ public class FootballController {
 
     private void playFinal(List<FootballTeam> teams) {
         ov.printMatchInfo(
-                FootballConstant.ZERO.getValue(),
-                FootballConstant.ONE.getValue(),
-                teams.get(FootballConstant.ZERO.getValue()),
-                teams.get(FootballConstant.ONE.getValue())
+                teams.size(),
+                1,
+                teams.get(0),
+                teams.get(1)
         );
         pressAnyKey();
 
         ov.finalWinnerMessage(
                 ms.fight(
-                        teams.get(FootballConstant.ZERO.getValue()),
-                        teams.get(FootballConstant.ONE.getValue())
+                        teams.get(0),
+                        teams.get(1)
                 )
         );
 
@@ -112,7 +112,7 @@ public class FootballController {
         List<FootballTeam> matchTeams = new ArrayList<>();
 
         boolean[] isSelected = new boolean[teamsCount];
-        for (int i = FootballConstant.ZERO.getValue(); i < teamsCount; i++) {
+        for (int i = 0; i < teamsCount; i++) {
             int footballTeamIdx = iv.userInput();
             validateIdxScope(teamsCount, footballTeamIdx, isSelected);
 
@@ -125,14 +125,14 @@ public class FootballController {
     private List<FootballTeam> progressMatch(int teamsCount, List<FootballTeam> teams) {
         List<FootballTeam> winners = new ArrayList<>();
 
-        int matchCount = FootballConstant.ZERO.getValue();
-        for (int i = FootballConstant.ZERO.getValue(); i < teamsCount; i += FootballConstant.TWO.getValue()) {
-            ov.printMatchInfo(teamsCount, ++matchCount, teams.get(i), teams.get(i + FootballConstant.ONE.getValue()));
+        int roundMatchCount = 0;
+        for (int i = 0; i < teamsCount; i += 2) {
+            ov.printMatchInfo(teamsCount, ++roundMatchCount, teams.get(i), teams.get(i + 1));
             pressAnyKey();
 
             FootballTeam winner = ms.fight(
                     teams.get(i),
-                    teams.get(i + FootballConstant.ONE.getValue())
+                    teams.get(i + 1)
             );
             winners.add(winner);
             ov.printWinner(winner);
@@ -142,7 +142,7 @@ public class FootballController {
     }
 
     private void validateIdxScope(int round, int idx, boolean[] isSelected) {
-        if (idx < FootballConstant.ZERO.getValue() || idx > (round - FootballConstant.ONE.getValue()))
+        if (idx < 0 || idx > (round - 1))
             throw new IllegalArgumentException(ErrorMessage.INVALID_NUMBER_SCOPE.getMessage());
         if (isSelected[idx])
             throw new IllegalArgumentException(ErrorMessage.ALREADY_SELECTED_TEAM.getMessage());

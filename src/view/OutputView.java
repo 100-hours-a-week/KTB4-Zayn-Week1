@@ -1,5 +1,6 @@
 package view;
 
+import common.ErrorMessage;
 import common.FootballConstant;
 import common.RoundName;
 import common.ViewMessage;
@@ -27,13 +28,13 @@ public class OutputView {
         }
 
         System.out.println(ViewMessage.MIDDLE_BAR.getMessage());
-        for (int i = FootballConstant.ZERO.getValue(); i < teams.size(); i++) {
+        for (int i = 0; i < teams.size(); i++) {
             System.out.print(ViewMessage.TEAM_NAME_FORMAT.get(
-                    i + FootballConstant.ONE.getValue(),
+                    i + 1,
                     teams.get(i).getTeamName()
             ));
 
-            if ((i + FootballConstant.ONE.getValue()) % FootballConstant.FOUR.getValue() == FootballConstant.ZERO.getValue())
+            if ((i + 1) % FootballConstant.SPLIT_NUMBER.getValue() == 0)
                 System.out.println();
         }
         System.out.println(ViewMessage.MIDDLE_BAR.getMessage());
@@ -49,13 +50,13 @@ public class OutputView {
         System.out.println(ViewMessage.FINAL_WINNER.get(winner.getTeamName(), winner.getShortName()));
     }
 
-    public void printMatchInfo(int roundNum, int idx, FootballTeam teamA, FootballTeam teamB) {
+    public void printMatchInfo(int roundNum, int roundMatchCount, FootballTeam teamA, FootballTeam teamB) {
         String roundName = setRoundName(roundNum);
 
         System.out.println(
                 ViewMessage.MATCH_INFO.get(
                         roundName,
-                        idx,
+                        roundMatchCount,
                         teamA.getTeamName(),
                         teamA.getShortName(),
                         teamB.getTeamName(),
@@ -74,6 +75,9 @@ public class OutputView {
         if (roundNum == FootballConstant.SEMI_FINALS.getValue())
             return RoundName.SEMI_FINALS.getRound();
 
-        return RoundName.FINAL.getRound();
+        if (roundNum == FootballConstant.FINAL.getValue())
+            return RoundName.FINAL.getRound();
+
+        throw new IllegalArgumentException(ErrorMessage.INVALID_PARAMETER.getMessage() + roundNum);
     }
 }
