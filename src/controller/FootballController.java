@@ -28,19 +28,17 @@ public class FootballController {
 
     public void run() {
         init();
-        List<FootballTeam> semiFinalsTeams;
 
         try { // 입력값 검증 필요 과정 -> IllegalArgumentException
             List<FootballTeam> winners = playRoundOf16();
-            semiFinalsTeams = playQuarterFinals(winners);
+            List<FootballTeam> semiFinalsTeams = playQuarterFinals(winners);
+
+            playFinal(
+                    playSemiFinals(semiFinalsTeams)
+            );
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            return;
         }
-
-        playFinal(
-                playSemiFinals(semiFinalsTeams)
-        );
     }
 
     // UEFA 16강 진출 팀 객체 생성 및 안내 메시지 출력

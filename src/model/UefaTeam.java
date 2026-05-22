@@ -1,5 +1,7 @@
 package model;
 
+import common.ErrorMessage;
+
 public class UefaTeam extends FootballTeam implements Winnable, Injurable {
     private double uefaWinningRate; // UEFA 우승 확률
     private int occurInjuryCount = 0;
@@ -10,6 +12,9 @@ public class UefaTeam extends FootballTeam implements Winnable, Injurable {
     }
 
     public void setWinningRate(double rate) {
+        if (rate <= 0)
+            throw new IllegalArgumentException(ErrorMessage.INVALID_PARAMETER.getMessage());
+
         this.uefaWinningRate = rate;
     }
 
