@@ -1,9 +1,8 @@
 package controller;
 
 import common.ErrorMessage;
-import common.FootballConstant;
-import common.FootballTeamName;
-import common.UefaWinningRate;
+import common.TournamentConstant;
+import common.UefaTeamInfo;
 import model.FootballTeam;
 import model.UefaTeam;
 import model.Winnable;
@@ -46,18 +45,16 @@ public class FootballController {
 
     // UEFA 16강 진출 팀 객체 생성 및 안내 메시지 출력
     private void init() {
-        for (FootballTeamName teamName : FootballTeamName.values())
-            totalTeams.add(new UefaTeam(teamName.getFullName(), teamName.getShortName()));
-
-        // UEFA팀 winningRate 초기화
-        int idx = 0;
-        for (UefaWinningRate winningRate : UefaWinningRate.values()) {
-            UefaTeam uTeam = (UefaTeam) totalTeams.get(idx++);
-            uTeam.setWinningRate(winningRate.getValue());
-        }
+        for (UefaTeamInfo teamName : UefaTeamInfo.values())
+            totalTeams.add(
+                    new UefaTeam(
+                            teamName.getFullName(),
+                            teamName.getShortName(),
+                            teamName.getWinningRate()
+                    )
+            );
 
         ov.displayInitMessage();
-
         pressAnyKey();
     }
 
@@ -65,9 +62,9 @@ public class FootballController {
         ov.displayTeamsMessage(totalTeams);
 
         // 대진표 입력
-        List<FootballTeam> matchTeams = createBracket(FootballConstant.ROUND_OF_16.getValue(), totalTeams);
+        List<FootballTeam> matchTeams = createBracket(TournamentConstant.ROUND_OF_16.getValue(), totalTeams);
         // 경기진행 및 결과 조회
-        List<FootballTeam> winners = progressMatch(FootballConstant.ROUND_OF_16.getValue(), matchTeams);
+        List<FootballTeam> winners = progressMatch(TournamentConstant.ROUND_OF_16.getValue(), matchTeams);
 
         pressAnyKey();
         return winners;
@@ -77,9 +74,9 @@ public class FootballController {
         ov.displayTeamsMessage(teams);
 
         // 대진표 입력
-        List<FootballTeam> matchTeams = createBracket(FootballConstant.QUARTER_FINALS.getValue(), teams);
+        List<FootballTeam> matchTeams = createBracket(TournamentConstant.QUARTER_FINALS.getValue(), teams);
         // 경기 진행 및 결과 조회
-        List<FootballTeam> winners = progressMatch(FootballConstant.QUARTER_FINALS.getValue(), matchTeams);
+        List<FootballTeam> winners = progressMatch(TournamentConstant.QUARTER_FINALS.getValue(), matchTeams);
 
         pressAnyKey();
         return winners;
@@ -87,13 +84,13 @@ public class FootballController {
 
     private List<FootballTeam> playSemiFinals(List<FootballTeam> teams) {
         ov.displayTeamsMessage(teams);
-        return progressMatch(FootballConstant.SEMI_FINALS.getValue(), teams);
+        return progressMatch(TournamentConstant.SEMI_FINALS.getValue(), teams);
     }
 
     private void playFinal(List<FootballTeam> teams) {
         ov.printMatchInfo(
                 teams.size(),
-                FootballConstant.ONLY_ONE_ROUND.getValue(),
+                TournamentConstant.ONLY_ONE_ROUND.getValue(),
                 teams.get(0),
                 teams.get(1)
         );

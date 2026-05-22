@@ -1,6 +1,6 @@
 package common;
 
-public enum FootballConstant {
+public enum TournamentConstant {
     ROUND_OF_16(16),
     QUARTER_FINALS(8),
     SEMI_FINALS(4),
@@ -10,7 +10,7 @@ public enum FootballConstant {
 
     private final int value;
 
-    FootballConstant(int value) {
+    TournamentConstant(int value) {
         this.value = value;
     }
 

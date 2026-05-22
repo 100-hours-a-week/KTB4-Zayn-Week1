@@ -1,7 +1,6 @@
 package view;
 
 import common.ErrorMessage;
-import common.FootballConstant;
 import common.ViewMessage;
 
 import java.util.Scanner;

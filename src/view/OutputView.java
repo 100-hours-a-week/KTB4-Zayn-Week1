@@ -1,7 +1,7 @@
 package view;
 
 import common.ErrorMessage;
-import common.FootballConstant;
+import common.TournamentConstant;
 import common.RoundName;
 import common.ViewMessage;
 import model.FootballTeam;
@@ -19,11 +19,11 @@ public class OutputView {
 
     public void displayTeamsMessage(List<FootballTeam> teams) {
         System.out.println(ViewMessage.MIDDLE_BAR.getMessage());
-        if (teams.size() == FootballConstant.ROUND_OF_16.getValue()) {
+        if (teams.size() == TournamentConstant.ROUND_OF_16.getValue()) {
             System.out.println(ViewMessage.ROUND_OF_16_INIT.getMessage());
         }
 
-        if (teams.size() == FootballConstant.QUARTER_FINALS.getValue()) {
+        if (teams.size() == TournamentConstant.QUARTER_FINALS.getValue()) {
             System.out.println(ViewMessage.ROUND_OF_8_INIT.getMessage());
         }
 
@@ -34,7 +34,7 @@ public class OutputView {
                     teams.get(i).getTeamName()
             ));
 
-            if ((i + 1) % FootballConstant.SPLIT_NUMBER.getValue() == 0)
+            if ((i + 1) % TournamentConstant.SPLIT_NUMBER.getValue() == 0)
                 System.out.println();
         }
         System.out.println(ViewMessage.MIDDLE_BAR.getMessage());
@@ -66,16 +66,16 @@ public class OutputView {
     }
 
     private String setRoundName(int roundNum) {
-        if (roundNum == FootballConstant.ROUND_OF_16.getValue())
+        if (roundNum == TournamentConstant.ROUND_OF_16.getValue())
             return RoundName.ROUND_OF_16.getRound();
 
-        if (roundNum == FootballConstant.QUARTER_FINALS.getValue())
+        if (roundNum == TournamentConstant.QUARTER_FINALS.getValue())
             return RoundName.QUATER_FINALS.getRound();
 
-        if (roundNum == FootballConstant.SEMI_FINALS.getValue())
+        if (roundNum == TournamentConstant.SEMI_FINALS.getValue())
             return RoundName.SEMI_FINALS.getRound();
 
-        if (roundNum == FootballConstant.FINAL.getValue())
+        if (roundNum == TournamentConstant.FINAL.getValue())
             return RoundName.FINAL.getRound();
 
         throw new IllegalArgumentException(ErrorMessage.INVALID_PARAMETER.getMessage() + roundNum);
