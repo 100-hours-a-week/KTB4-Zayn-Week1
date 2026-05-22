@@ -92,7 +92,7 @@ public class FootballController {
     private void playFinal(List<FootballTeam> teams) {
         ov.printMatchInfo(
                 teams.size(),
-                1,
+                FootballConstant.ONLY_ONE_ROUND.getValue(),
                 teams.get(0),
                 teams.get(1)
         );
