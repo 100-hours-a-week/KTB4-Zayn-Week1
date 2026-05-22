@@ -1,9 +1,9 @@
 package service;
 
-import common.FootballConstant;
 import common.RandomConstant;
 import model.FootballTeam;
-import model.UefaTeam;
+import model.Injurable;
+import model.Winnable;
 
 import java.util.Random;
 
@@ -14,44 +14,40 @@ public class MatchService {
         this.rd = new Random();
     }
 
-    public FootballTeam fight(FootballTeam teamA, FootballTeam teamB) {
-        injuryOccur(teamA, teamB);
+    public FootballTeam fight(Winnable teamA, Winnable teamB) {
+        if (teamA instanceof Injurable injurable) injuryOccur(injurable);
+        if (teamB instanceof Injurable injurable) injuryOccur(injurable);
 
         double teamAWeight = Math.sqrt(
-                ((UefaTeam) teamA).getWinningRate()
+                teamA.getWinningRate()
         );
 
         double teamBWeight = Math.sqrt(
-                ((UefaTeam) teamB).getWinningRate()
+                teamB.getWinningRate()
         );
 
         double r = rd.nextDouble() * (teamAWeight + teamBWeight);
 
-        if (teamAWeight >= r) return teamA;
-        return teamB;
+        if (teamAWeight >= r) return (FootballTeam) teamA;
+        return (FootballTeam) teamB;
     }
 
-    private void injuryOccur(FootballTeam teamA, FootballTeam teamB) {
-        double rA = rd.nextDouble(), rB = rd.nextDouble();
-
-        if (rA < RandomConstant.INJURY_PROBABILITY.getValue()) {
-            teamA.setOccurInjuryCount(
-                    teamA.getOccurInjuryCount() + 1
-            );
-
-            ((UefaTeam) teamA).setWinningRate(
-                    ((UefaTeam) teamA).getWinningRate() * Math.pow(RandomConstant.DECREASE_RATE.getValue(), teamA.getOccurInjuryCount())
-            );
+    private void injuryOccur(Injurable team) {
+        double r = rd.nextDouble();
+        if (r < RandomConstant.INJURY_PROBABILITY.getValue()) {
+            team.injure();
+            decreaseWinningRate((Winnable) team);
         }
+    }
 
-        if (rB < RandomConstant.INJURY_PROBABILITY.getValue()) {
-            teamB.setOccurInjuryCount(
-                    teamB.getOccurInjuryCount() + 1
-            );
+    private void decreaseWinningRate(Winnable team) {
+        if (!(team instanceof Injurable)) return;
 
-            ((UefaTeam) teamB).setWinningRate(
-                    ((UefaTeam) teamB).getWinningRate() * Math.pow(RandomConstant.DECREASE_RATE.getValue(), teamB.getOccurInjuryCount())
-            );
-        }
+        team.setWinningRate(
+                team.getWinningRate() * Math.pow(
+                        RandomConstant.DECREASE_RATE.getValue(),
+                        ((Injurable) team).getInjuryCount()
+                )
+        );
     }
 }

@@ -6,6 +6,7 @@ import common.FootballTeamName;
 import common.UefaWinningRate;
 import model.FootballTeam;
 import model.UefaTeam;
+import model.Winnable;
 import service.MatchService;
 import view.InputView;
 import view.OutputView;
@@ -100,8 +101,8 @@ public class FootballController {
 
         ov.finalWinnerMessage(
                 ms.fight(
-                        teams.get(0),
-                        teams.get(1)
+                        (Winnable) teams.get(0),
+                        (Winnable) teams.get(1)
                 )
         );
 
@@ -131,8 +132,8 @@ public class FootballController {
             pressAnyKey();
 
             FootballTeam winner = ms.fight(
-                    teams.get(i),
-                    teams.get(i + 1)
+                    (Winnable) teams.get(i),
+                    (Winnable) teams.get(i + 1)
             );
             winners.add(winner);
             ov.printWinner(winner);
