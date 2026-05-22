@@ -1,6 +1,5 @@
 package view;
 
-import common.ErrorMessage;
 import common.TournamentConstant;
 import common.RoundName;
 import common.ViewMessage;
@@ -51,11 +50,9 @@ public class OutputView {
     }
 
     public void printMatchInfo(int roundNum, int roundMatchCount, FootballTeam teamA, FootballTeam teamB) {
-        String roundName = setRoundName(roundNum);
-
         System.out.println(
                 ViewMessage.MATCH_INFO.get(
-                        roundName,
+                        RoundName.getRound(roundNum),
                         roundMatchCount,
                         teamA.getTeamName(),
                         teamA.getShortName(),
@@ -63,21 +60,5 @@ public class OutputView {
                         teamB.getShortName()
                 )
         );
-    }
-
-    private String setRoundName(int roundNum) {
-        if (roundNum == TournamentConstant.ROUND_OF_16.getValue())
-            return RoundName.ROUND_OF_16.getRound();
-
-        if (roundNum == TournamentConstant.QUARTER_FINALS.getValue())
-            return RoundName.QUATER_FINALS.getRound();
-
-        if (roundNum == TournamentConstant.SEMI_FINALS.getValue())
-            return RoundName.SEMI_FINALS.getRound();
-
-        if (roundNum == TournamentConstant.FINAL.getValue())
-            return RoundName.FINAL.getRound();
-
-        throw new IllegalArgumentException(ErrorMessage.INVALID_PARAMETER.getMessage() + roundNum);
     }
 }
