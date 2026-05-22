@@ -18,12 +18,4 @@ public class FootballTeam extends Team {
     public String getShortName() {
         return shortName;
     }
-
-//    public void setOccurInjuryCount(int occurInjuryCount) {
-//        this.occurInjuryCount = occurInjuryCount;
-//    }
-//
-//    public int getOccurInjuryCount() {
-//        return occurInjuryCount;
-//    }
 }
