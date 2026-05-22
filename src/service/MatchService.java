@@ -6,6 +6,7 @@ import model.Injurable;
 import model.Winnable;
 
 import java.util.Random;
+import java.util.stream.Stream;
 
 public class MatchService {
     private final Random rd;
@@ -15,9 +16,18 @@ public class MatchService {
     }
 
     public FootballTeam fight(Winnable teamA, Winnable teamB) {
-        if (teamA instanceof Injurable injurable) injuryOccur(injurable);
-        if (teamB instanceof Injurable injurable) injuryOccur(injurable);
+        applyInjuries(teamA, teamB);
+        return decideWinner(teamA, teamB);
+    }
 
+    private void applyInjuries(Winnable teamA, Winnable teamB) {
+        Stream.of(teamA, teamB)
+                .filter(Injurable.class::isInstance)
+                .map(Injurable.class::cast)
+                .forEach(this::injuryOccur);
+    }
+
+    private FootballTeam decideWinner(Winnable teamA, Winnable teamB) {
         double teamAWeight = Math.sqrt(
                 teamA.getWinningRate()
         );
